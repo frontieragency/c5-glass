@@ -46,18 +46,34 @@ if ("IntersectionObserver" in window) {
 const form = document.getElementById("quoteForm");
 const success = document.getElementById("formSuccess");
 if (form) {
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
-    // TODO: wire to a real endpoint (Formspree / Netlify Forms / your CRM webhook).
-    const data = Object.fromEntries(new FormData(form).entries());
-    console.log("Mockup request:", data);
-    form.reset();
-    success.hidden = false;
-    success.scrollIntoView({ behavior: "smooth", block: "center" });
+    const btn = form.querySelector('button[type="submit"]');
+    const original = btn ? btn.textContent : "";
+    if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: new FormData(form),
+      });
+      const out = await res.json();
+      if (out.success) {
+        form.reset();
+        success.hidden = false;
+        success.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else {
+        alert("Sorry — that didn't send. Please call or text instead.");
+      }
+    } catch (err) {
+      alert("Couldn't send right now — check your connection, or call/text instead.");
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = original; }
+    }
   });
 }
 
