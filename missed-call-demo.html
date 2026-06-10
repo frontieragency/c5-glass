@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Missed-Call Text-Back — Live Demo | C5</title>
+  <meta name="description" content="See what happens 10 seconds after a missed call: C5 texts your customer back automatically so they never call your competition." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=6" />
+  <style>
+    /* ===== page ===== */
+    .demo-banner {
+      background: var(--primary);
+      color: var(--on-primary);
+      text-align: center;
+      font-family: var(--ff-body);
+      font-weight: 600;
+      font-size: 0.92rem;
+      padding: 10px 16px;
+    }
+    .demo-banner a { text-decoration: underline; font-weight: 700; }
+
+    .demo-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: clamp(40px, 7vw, 80px) 24px clamp(56px, 8vw, 96px);
+      text-align: center;
+    }
+    .demo-wrap .eyebrow { color: var(--text-primary); }
+    .demo-wrap h1 {
+      font-family: var(--ff-display);
+      font-weight: 400;
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: var(--text-emph);
+    }
+    .demo-wrap .lede {
+      color: var(--text-soft);
+      font-size: 1.05rem;
+      margin: 18px auto 0;
+      max-width: 560px;
+    }
+
+    /* ===== phone ===== */
+    .phone {
+      width: 340px;
+      max-width: 88vw;
+      margin: clamp(36px, 6vw, 56px) auto 0;
+      background: #0b0b10;
+      border-radius: 44px;
+      padding: 12px;
+      box-shadow: 0 40px 90px -40px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.06);
+      position: relative;
+    }
+    .phone__screen {
+      background: #f4f4f6;
+      border-radius: 33px;
+      overflow: hidden;
+      height: 640px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .phone__notch {
+      position: absolute;
+      top: 12px; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 26px;
+      background: #0b0b10;
+      border-radius: 0 0 16px 16px;
+      z-index: 5;
+    }
+    /* contact header (iOS-style) */
+    .chat__header {
+      background: #f7f7f9;
+      border-bottom: 1px solid #e2e2e6;
+      padding: 38px 14px 10px;
+      text-align: center;
+    }
+    .chat__avatar {
+      width: 46px; height: 46px;
+      margin: 0 auto 5px;
+      border-radius: 50%;
+      background: linear-gradient(160deg, #5266eb, #9cb4e8);
+      display: grid; place-items: center;
+      color: #fff; font-family: var(--ff-body); font-weight: 700; font-size: 1rem;
+    }
+    .chat__name { font-family: var(--ff-body); font-weight: 600; font-size: 0.92rem; color: #111; }
+    .chat__sub { font-size: 0.72rem; color: #8a8a8f; margin-top: 1px; }
+
+    /* message area */
+    .chat {
+      flex: 1;
+      padding: 14px 12px 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: #fff;
+    }
+    .chat__pill {
+      align-self: center;
+      font-family: var(--ff-body);
+      font-size: 0.68rem;
+      color: #8a8a8f;
+      background: #ececef;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin: 4px 0 8px;
+    }
+    .chat__pill strong { color: #6b6b70; font-weight: 600; }
+
+    .bubble {
+      font-family: var(--ff-body);
+      font-size: 0.86rem;
+      line-height: 1.35;
+      padding: 9px 13px;
+      border-radius: 18px;
+      max-width: 78%;
+      animation: pop 0.22s ease;
+    }
+    .bubble--biz {
+      align-self: flex-start;
+      background: #e9e9eb;
+      color: #111;
+      border-bottom-left-radius: 5px;
+    }
+    .bubble--cust {
+      align-self: flex-end;
+      background: #34c759;        /* SMS green — what a customer sees on iPhone */
+      color: #fff;
+      border-bottom-right-radius: 5px;
+    }
+    .typing {
+      align-self: flex-start;
+      background: #e9e9eb;
+      border-bottom-left-radius: 5px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      display: inline-flex;
+      gap: 4px;
+      animation: pop 0.22s ease;
+    }
+    .typing span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #b0b0b5;
+      animation: blink 1.2s infinite ease-in-out;
+    }
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes pop { from { opacity: 0; transform: translateY(6px) scale(0.97); } to { opacity: 1; transform: none; } }
+    @keyframes blink { 0%, 60%, 100% { opacity: 0.35; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+
+    .demo-foot {
+      color: var(--text-mute);
+      font-size: 0.9rem;
+      margin-top: clamp(28px, 5vw, 44px);
+    }
+    .demo-foot strong { color: var(--text-primary); font-weight: 600; }
+
+    .demo-cta { margin-top: 28px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bubble, .typing { animation: none; }
+      .typing span { animation: none; opacity: 0.6; }
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-banner">
+    👀 Live demo by C5 — this is what your customer sees seconds after a missed call.
+    <a href="index.html">Back to C5 →</a>
+  </div>
+
+  <main class="demo-wrap">
+    <span class="eyebrow">See it in action</span>
+    <h1>What happens 10 seconds after a missed call</h1>
+    <p class="lede">
+      You're on a job and the phone rings out. Instead of losing the customer to whoever picks up next,
+      C5 texts them back automatically — and the conversation starts without you.
+    </p>
+
+    <div class="phone" aria-hidden="true">
+      <div class="phone__notch"></div>
+      <div class="phone__screen">
+        <div class="chat__header">
+          <div class="chat__avatar">YG</div>
+          <div class="chat__name">[Your Shop] Glass</div>
+          <div class="chat__sub">Text Message</div>
+        </div>
+        <div class="chat" id="chat"></div>
+      </div>
+    </div>
+
+    <p class="demo-foot">
+      Runs on your <strong>existing number</strong>. No app, no new line, nothing for you to manage —
+      the lead just lands in your pocket, already talking.
+    </p>
+    <a href="index.html#mockup" class="btn btn--primary btn--lg demo-cta">Start my free trial</a>
+  </main>
+
+  <script>
+    const chat = document.getElementById("chat");
+
+    // The conversation. type: 'pill' | 'biz' | 'cust'. wait = ms before this step.
+    const script = [
+      { type: "pill", html: "Missed call · just now", wait: 600 },
+      { type: "biz",  text: "Hi, thanks for calling [Your Shop] Glass! 👋 Sorry we missed you — we're out on a job. What glass work do you need? Text us right here and we'll jump on it.", wait: 900 },
+      { type: "cust", text: "Need to replace all the windows in my house.", wait: 1400 },
+      { type: "biz",  text: "Happy to help with that. What city are you in?", wait: 1100 },
+      { type: "cust", text: "San Jose — hoping to get it done this month.", wait: 1300 },
+      { type: "biz",  text: "Perfect. We'll text you a time to come measure within the hour. 🙌", wait: 1100 },
+    ];
+
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    const scrollDown = () => { chat.scrollTop = chat.scrollHeight; };
+
+    function addPill(html) {
+      const el = document.createElement("div");
+      el.className = "chat__pill";
+      el.innerHTML = html;
+      chat.appendChild(el);
+      scrollDown();
+    }
+    function addBubble(side, text) {
+      const el = document.createElement("div");
+      el.className = "bubble bubble--" + side;
+      el.textContent = text;
+      chat.appendChild(el);
+      scrollDown();
+    }
+    async function showTyping(ms) {
+      const t = document.createElement("div");
+      t.className = "typing";
+      t.innerHTML = "<span></span><span></span><span></span>";
+      chat.appendChild(t);
+      scrollDown();
+      await sleep(ms);
+      t.remove();
+    }
+
+    async function run() {
+      while (true) {
+        chat.innerHTML = "";
+        for (const step of script) {
+          await sleep(step.wait);
+          if (step.type === "pill") {
+            addPill(step.html);
+          } else if (step.type === "biz") {
+            await showTyping(1200);
+            addBubble("biz", step.text);
+          } else {
+            addBubble("cust", step.text);
+          }
+        }
+        await sleep(3200); // hold the finished conversation, then loop
+      }
+    }
+    run();
+  </script>
+</body>
+</html>
